@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports:
+      - ${MT_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${MT_DATABASE_USER}
+      POSTGRES_PASSWORD: ${MT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${MT_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
