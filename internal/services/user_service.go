@@ -1,8 +1,11 @@
+// Package services
 package services
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lopesmarcello/money-transfer/internal/store/pgstore"
 )
@@ -34,9 +37,9 @@ func (us *UserService) CreateUserPessoaFisica(ctx context.Context, rendaMensal f
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return uuid.UUID{}, ErrDuplicatedEmailOrUsername
+			return 0, errors.New("duplicated email")
 		}
-		return uuid.UUID{}, err
+		return 0, err
 	}
 
 	return id, nil

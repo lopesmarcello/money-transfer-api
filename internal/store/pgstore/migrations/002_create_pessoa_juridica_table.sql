@@ -1,5 +1,6 @@
 -- Write your migrate up statements here
 CREATE TABLE IF NOT EXISTS pessoa_juridica(
+  
 id SERIAL PRIMARY KEY,
 faturamento FLOAT NOT NULL,
 idade INT NOT NULL,
@@ -8,6 +9,7 @@ celular VARCHAR(20) NOT NULL,
 email_corporativo VARCHAR(255) NOT NULL,
 categoria VARCHAR(255) NOT NULL,
 saldo FLOAT NOT NULL
+
 )
 
 

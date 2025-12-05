@@ -84,3 +84,87 @@ func (q *Queries) CreateUserPessoaJuridica(ctx context.Context, arg CreateUserPe
 	err := row.Scan(&id)
 	return id, err
 }
+
+const getUserPessoaFisicaByEmail = `-- name: GetUserPessoaFisicaByEmail :one
+SELECT id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo FROM pessoa_fisica
+WHERE email = $1
+`
+
+func (q *Queries) GetUserPessoaFisicaByEmail(ctx context.Context, email string) (PessoaFisica, error) {
+	row := q.db.QueryRow(ctx, getUserPessoaFisicaByEmail, email)
+	var i PessoaFisica
+	err := row.Scan(
+		&i.ID,
+		&i.RendaMensal,
+		&i.Idade,
+		&i.NomeCompleto,
+		&i.Celular,
+		&i.Email,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
+const getUserPessoaFisicaByID = `-- name: GetUserPessoaFisicaByID :one
+SELECT id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo FROM pessoa_fisica
+WHERE id = $1
+`
+
+func (q *Queries) GetUserPessoaFisicaByID(ctx context.Context, id int32) (PessoaFisica, error) {
+	row := q.db.QueryRow(ctx, getUserPessoaFisicaByID, id)
+	var i PessoaFisica
+	err := row.Scan(
+		&i.ID,
+		&i.RendaMensal,
+		&i.Idade,
+		&i.NomeCompleto,
+		&i.Celular,
+		&i.Email,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
+const getUserPessoaJuridicaByEmail = `-- name: GetUserPessoaJuridicaByEmail :one
+SELECT id, faturamento, idade, nome_fantasia, celular, email_corporativo, categoria, saldo FROM pessoa_juridica
+WHERE email_corporativo = $1
+`
+
+func (q *Queries) GetUserPessoaJuridicaByEmail(ctx context.Context, emailCorporativo string) (PessoaJuridica, error) {
+	row := q.db.QueryRow(ctx, getUserPessoaJuridicaByEmail, emailCorporativo)
+	var i PessoaJuridica
+	err := row.Scan(
+		&i.ID,
+		&i.Faturamento,
+		&i.Idade,
+		&i.NomeFantasia,
+		&i.Celular,
+		&i.EmailCorporativo,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
+const getUserPessoaJuridicaByID = `-- name: GetUserPessoaJuridicaByID :one
+SELECT id, faturamento, idade, nome_fantasia, celular, email_corporativo, categoria, saldo FROM pessoa_juridica
+WHERE id = $1
+`
+
+func (q *Queries) GetUserPessoaJuridicaByID(ctx context.Context, id int32) (PessoaJuridica, error) {
+	row := q.db.QueryRow(ctx, getUserPessoaJuridicaByID, id)
+	var i PessoaJuridica
+	err := row.Scan(
+		&i.ID,
+		&i.Faturamento,
+		&i.Idade,
+		&i.NomeFantasia,
+		&i.Celular,
+		&i.EmailCorporativo,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}

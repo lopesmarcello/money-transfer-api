@@ -1,5 +1,5 @@
-// Package utils
-package utils
+// Package validator for client validation
+package validator
 
 import (
 	"context"

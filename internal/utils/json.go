@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/lopesmarcello/money-transfer/internal/utils/validator"
 )
 
 func EncodeJSON[T any](w http.ResponseWriter, r *http.Request, status int, data T) error {
@@ -15,7 +17,7 @@ func EncodeJSON[T any](w http.ResponseWriter, r *http.Request, status int, data 
 	return nil
 }
 
-func DecodeValidJSON[T Validator](r *http.Request) (T, map[string]string, error) {
+func DecodeValidJSON[T validator.Validator](r *http.Request) (T, map[string]string, error) {
 	var data T
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 		return data, nil, fmt.Errorf("error while decoding JSON:\n%w", err)
@@ -40,11 +42,14 @@ func DecodeJSON[T any](r *http.Request) (T, error) {
 func JSONmsg(args ...string) map[string]string {
 	msg := make(map[string]string)
 
-	for i, v := range args {
+	for index, value := range args {
+		// i0 = key
+		// i0 = value
 		// ie: "message", "something was successful", "foo", "bar"...
-		if i%2 != 0 {
-			// is value
-			msg[v] = args[i-1]
+		// starts on he second position of the array
+		if index%2 != 0 {
+			key := args[index-1]
+			msg[key] = value
 		}
 	}
 
