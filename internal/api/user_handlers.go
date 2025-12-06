@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/lopesmarcello/money-transfer/internal/usecases/user"
 	"github.com/lopesmarcello/money-transfer/internal/utils"
@@ -29,22 +30,37 @@ func (api *API) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// data.TipoPessoa
+	var id int32
+	isPessoaFisica := data.TipoPessoa == 0
 
-	id, err := api.UserService.CreateUserPessoaFisica(r.Context(),
-		data.RendaMensal,
-		int32(data.Idade),
-		data.NomeCompleto,
-		data.Email,
-		data.Celular,
-		data.Categoria,
-	)
-	if err != nil {
-		utils.EncodeJSON(w, r, http.StatusUnprocessableEntity,
-			utils.JSONmsg("error", "unprocessable entity", "message", "error while creating pessoa fisica"))
-		return
+	if isPessoaFisica {
+		id, err = api.UserService.CreateUserPessoaFisica(r.Context(),
+			data.RendaMensal,
+			int32(data.Idade),
+			data.NomeCompleto,
+			data.Email,
+			data.Celular,
+			data.Categoria,
+		)
+		if err != nil {
+			utils.EncodeJSON(w, r, http.StatusUnprocessableEntity,
+				utils.JSONmsg("error", "unprocessable entity", "message", "error while creating pessoa fisica"))
+			return
+		}
+	} else {
+		id, err = api.UserService.CreateUserPessoaJuridica(r.Context(),
+			data.Faturamento,
+			data.NomeFantasia,
+			data.Email,
+			data.Celular,
+			data.Categoria,
+			data.Saldo)
+		if err != nil {
+			utils.EncodeJSON(w, r, http.StatusUnprocessableEntity,
+				utils.JSONmsg("error", "unprocessable entity", "message", "error while creating pessoa juridica"))
+			return
+		}
 	}
 
-	utils.EncodeJSON(w, r, http.StatusCreated,
-		utils.JSONmsg("sucess", "user created", "user_id", string(id)))
+	utils.EncodeJSON(w, r, http.StatusCreated, utils.JSONmsg("sucess", "user created", "user_id", strconv.Itoa(int(id))))
 }

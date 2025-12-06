@@ -3,7 +3,6 @@ package user
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/lopesmarcello/money-transfer/internal/utils/validator"
 )
@@ -39,7 +38,6 @@ func (req CreateUserReq) Valid(ctx context.Context) validator.Evaluator {
 		isPessoaFisica = req.TipoPessoa == 0
 	)
 
-	slog.Info("isPessoaFisica", isPessoaFisica)
 	// Both
 	eval.CheckField(req.Idade > 0, "idade", "this field cannot be negative")
 

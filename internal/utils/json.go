@@ -39,8 +39,8 @@ func DecodeJSON[T any](r *http.Request) (T, error) {
 	return data, nil
 }
 
-func JSONmsg(args ...string) map[string]string {
-	msg := make(map[string]string)
+func JSONmsg(args ...any) map[string]any {
+	msg := make(map[string]any)
 
 	for index, value := range args {
 		// i0 = key
@@ -49,7 +49,9 @@ func JSONmsg(args ...string) map[string]string {
 		// starts on he second position of the array
 		if index%2 != 0 {
 			key := args[index-1]
-			msg[key] = value
+			if keyString, ok := key.(string); ok {
+				msg[keyString] = value
+			}
 		}
 	}
 

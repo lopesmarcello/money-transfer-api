@@ -41,8 +41,9 @@ func main() {
 	}
 
 	api := api.API{
-		Router:      chi.NewMux(),
-		UserService: services.NewUserService(pool),
+		Router:          chi.NewMux(),
+		UserService:     services.NewUserService(pool),
+		CurrencyService: services.NewCurrencyService(pool),
 	}
 
 	api.BindRoutes()

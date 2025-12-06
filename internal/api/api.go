@@ -7,6 +7,7 @@ import (
 )
 
 type API struct {
-	Router      *chi.Mux
-	UserService services.UserService
+	Router          *chi.Mux
+	UserService     services.UserService
+	CurrencyService services.CurrencyService
 }
