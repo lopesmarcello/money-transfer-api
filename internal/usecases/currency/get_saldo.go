@@ -3,18 +3,17 @@ package currency
 import (
 	"context"
 
-	"github.com/lopesmarcello/money-transfer/internal/usecases/user"
 	"github.com/lopesmarcello/money-transfer/internal/utils/validator"
 )
 
 type GetSaldoReq struct {
-	TipoPessoa user.Pessoa `json:"tipo_pessoa"`
+	IsPessoaFisica bool `json:"is_pessoa_fisica"`
 }
 
 func (req GetSaldoReq) Valid(ctx context.Context) validator.Evaluator {
 	var eval validator.Evaluator
 
-	eval.CheckField(req.TipoPessoa != 0 || req.TipoPessoa != 1, "tipo_pessoa", "must be 0 or 1")
+	eval.CheckField(validator.AssertBool(req.IsPessoaFisica), "is_pessoa_fisica", "must be true or false")
 
 	return eval
 }

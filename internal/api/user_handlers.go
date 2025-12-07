@@ -1,30 +1,45 @@
 package api
 
 import (
-	"fmt"
-	"log/slog"
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/lopesmarcello/money-transfer/internal/usecases/user"
 	"github.com/lopesmarcello/money-transfer/internal/utils"
 )
 
+// Deletes user
+func (api *API) handleCloseAccount(w http.ResponseWriter, r *http.Request) {
+	stringID := chi.URLParam(r, "id")
+	userID64, err := strconv.Atoi(stringID)
+	if err != nil {
+		utils.EncodeJSON(w, r, http.StatusBadRequest, utils.JSONmsg("error", "error parsing ID", "user_id", stringID))
+		return
+	}
+	userID := int32(userID64)
+
+	data, problems, err := utils.DecodeValidJSON[user.DeleteUserReq](r)
+	if len(problems) > 0 {
+		utils.EncodeJSON(w, r, http.StatusUnprocessableEntity, problems)
+	}
+	if err != nil {
+		utils.EncodeJSON(w, r, http.StatusUnprocessableEntity, err)
+	}
+
+	api.UserService.DeleteUser(r.Context(), data.IsPessoaFisica, userID)
+}
+
+// Creates new user
 func (api *API) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	data, problems, err := utils.DecodeValidJSON[user.CreateUserReq](r)
-	slog.Info(fmt.Sprintf("%d problems", len(problems)))
 
 	if len(problems) > 0 {
-		for problem := range problems {
-			fmt.Println("Problem:")
-			fmt.Println(problem)
-		}
 		utils.EncodeJSON(w, r, http.StatusUnprocessableEntity, problems)
 		return
 	}
 
 	if err != nil {
-		slog.Error("Error decoding JSON:", err)
 		utils.EncodeJSON(w, r, http.StatusInternalServerError,
 			utils.JSONmsg("error", "internal server error", "message", "error decoding json"))
 		return

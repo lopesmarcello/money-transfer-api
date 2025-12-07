@@ -30,3 +30,59 @@ func (q *Queries) GetSaldoPessoaJuridicaByID(ctx context.Context, id int32) (flo
 	err := row.Scan(&saldo)
 	return saldo, err
 }
+
+const updateSaldoFromPessoaFisica = `-- name: UpdateSaldoFromPessoaFisica :one
+UPDATE pessoa_fisica
+SET saldo = $1
+WHERE id = $2
+RETURNING id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo
+`
+
+type UpdateSaldoFromPessoaFisicaParams struct {
+	Saldo float64 `json:"saldo"`
+	ID    int32   `json:"id"`
+}
+
+func (q *Queries) UpdateSaldoFromPessoaFisica(ctx context.Context, arg UpdateSaldoFromPessoaFisicaParams) (PessoaFisica, error) {
+	row := q.db.QueryRow(ctx, updateSaldoFromPessoaFisica, arg.Saldo, arg.ID)
+	var i PessoaFisica
+	err := row.Scan(
+		&i.ID,
+		&i.RendaMensal,
+		&i.Idade,
+		&i.NomeCompleto,
+		&i.Celular,
+		&i.Email,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
+const updateSaldoFromPessoaJuridica = `-- name: UpdateSaldoFromPessoaJuridica :one
+UPDATE pessoa_fisica
+SET saldo = $1
+WHERE id = $2
+RETURNING id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo
+`
+
+type UpdateSaldoFromPessoaJuridicaParams struct {
+	Saldo float64 `json:"saldo"`
+	ID    int32   `json:"id"`
+}
+
+func (q *Queries) UpdateSaldoFromPessoaJuridica(ctx context.Context, arg UpdateSaldoFromPessoaJuridicaParams) (PessoaFisica, error) {
+	row := q.db.QueryRow(ctx, updateSaldoFromPessoaJuridica, arg.Saldo, arg.ID)
+	var i PessoaFisica
+	err := row.Scan(
+		&i.ID,
+		&i.RendaMensal,
+		&i.Idade,
+		&i.NomeCompleto,
+		&i.Celular,
+		&i.Email,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}

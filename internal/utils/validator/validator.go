@@ -47,3 +47,8 @@ func MinChars(value string, n int) bool {
 func Matches(value string, rx *regexp.Regexp) bool {
 	return rx.MatchString(value)
 }
+
+func AssertBool(value any) bool {
+	_, ok := value.(bool)
+	return ok
+}

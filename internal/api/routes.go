@@ -14,17 +14,14 @@ func (api *API) BindRoutes() {
 
 	api.Router.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
-			r.Post("/conta", api.handleCreateUser)
-			r.Get("/conta/{id}/saldo", api.handleGetSaldo)
+			r.Route("/conta", func(r chi.Router) {
+				r.Post("/", api.handleCreateUser)
+				r.Get("/{id}/saldo", api.handleGetSaldo)
+				r.Post("/{id}/deposito", api.handleDeposit)
+				r.Post("/{id}/saque", api.handleWithdraw)
+				r.Post("/transferencia", api.handleTransfer)
+				r.Delete("/{id}", api.handleCloseAccount)
+			})
 		})
 	})
 }
-
-// Criar Conta (POST /conta) -> Testar
-//
-// Consultar Saldo (GET /conta/{id}/saldo)
-// Depositar Dinheiro (POST /conta/{id}/deposito)
-// Sacar Dinheiro (POST /conta/{id}/saque)
-// Transferência (POST /conta/transferencia)
-//
-// Fechar Conta (DELETE /conta/{id})

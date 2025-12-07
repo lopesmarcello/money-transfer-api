@@ -38,3 +38,11 @@ WHERE id = $1;
 -- name: GetUserPessoaJuridicaByEmail :one
 SELECT * FROM pessoa_juridica
 WHERE email_corporativo = $1;
+
+-- name: DeleteUserPessoaFisica :one
+DELETE FROM pessoa_fisica WHERE id = $1
+RETURNING *;
+
+-- name: DeleteUserPessoaJuridica :one
+DELETE FROM pessoa_juridica WHERE id = $1
+RETURNING *;

@@ -85,6 +85,48 @@ func (q *Queries) CreateUserPessoaJuridica(ctx context.Context, arg CreateUserPe
 	return id, err
 }
 
+const deleteUserPessoaFisica = `-- name: DeleteUserPessoaFisica :one
+DELETE FROM pessoa_fisica WHERE id = $1
+RETURNING id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo
+`
+
+func (q *Queries) DeleteUserPessoaFisica(ctx context.Context, id int32) (PessoaFisica, error) {
+	row := q.db.QueryRow(ctx, deleteUserPessoaFisica, id)
+	var i PessoaFisica
+	err := row.Scan(
+		&i.ID,
+		&i.RendaMensal,
+		&i.Idade,
+		&i.NomeCompleto,
+		&i.Celular,
+		&i.Email,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
+const deleteUserPessoaJuridica = `-- name: DeleteUserPessoaJuridica :one
+DELETE FROM pessoa_juridica WHERE id = $1
+RETURNING id, faturamento, idade, nome_fantasia, celular, email_corporativo, categoria, saldo
+`
+
+func (q *Queries) DeleteUserPessoaJuridica(ctx context.Context, id int32) (PessoaJuridica, error) {
+	row := q.db.QueryRow(ctx, deleteUserPessoaJuridica, id)
+	var i PessoaJuridica
+	err := row.Scan(
+		&i.ID,
+		&i.Faturamento,
+		&i.Idade,
+		&i.NomeFantasia,
+		&i.Celular,
+		&i.EmailCorporativo,
+		&i.Categoria,
+		&i.Saldo,
+	)
+	return i, err
+}
+
 const getUserPessoaFisicaByEmail = `-- name: GetUserPessoaFisicaByEmail :one
 SELECT id, renda_mensal, idade, nome_completo, celular, email, categoria, saldo FROM pessoa_fisica
 WHERE email = $1

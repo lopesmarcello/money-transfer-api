@@ -82,3 +82,24 @@ func (us *UserService) CreateUserPessoaJuridica(ctx context.Context,
 
 	return id, nil
 }
+
+func (us *UserService) DeleteUser(ctx context.Context, isPessoaFisica bool, id int32) (map[string]any, error) {
+	result := make(map[string]any)
+	if isPessoaFisica {
+		deletedPerson, err := us.queries.DeleteUserPessoaFisica(ctx, id)
+		if err != nil {
+			return result, err
+		}
+		result["deleted"] = deletedPerson
+	}
+
+	if !isPessoaFisica {
+		deletedPerson, err := us.queries.DeleteUserPessoaFisica(ctx, id)
+		if err != nil {
+			return result, err
+		}
+		result["deleted"] = deletedPerson
+	}
+
+	return result, nil
+}
