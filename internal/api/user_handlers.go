@@ -1,10 +1,12 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/csrf"
 	"github.com/lopesmarcello/money-transfer/internal/usecases/user"
 	"github.com/lopesmarcello/money-transfer/internal/utils"
 )
@@ -78,4 +80,19 @@ func (api *API) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.EncodeJSON(w, r, http.StatusCreated, utils.JSONmsg("sucess", "user created", "user_id", strconv.Itoa(int(id))))
+}
+
+func (api *API) getCsrfToken(w http.ResponseWriter, r *http.Request) {
+	token := csrf.Token(r)
+	log.Printf("Generated CSRF token: %s", token) // Log to console
+	if token == "" {
+		log.Println("Warning: Empty CSRF token - middleware may not have run")
+	}
+	// Return the token as JSON for easy consumption by clients
+	w.Header().Set("Content-Type", "application/json")
+	utils.EncodeJSON(w, r, http.StatusOK,
+		utils.JSONmsg("csrf_token", token))
+
+	// Optionally, set it as a header for SPAs (e.g., X-CSRF-Token)
+	w.Header().Set("X-CSRF-Token", token)
 }
