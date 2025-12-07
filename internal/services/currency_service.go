@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/lopesmarcello/money-transfer/internal/store/pgstore"
@@ -137,18 +138,23 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 	if isOriginPessoaFisica {
 		currentAmount, err := cs.queries.GetSaldoPessoaFisicaByID(ctx, originID)
 		if err != nil {
+			fmt.Println("error getting origin current amount:")
+			fmt.Println(err)
 			return result, err
 		}
 		originCurrency = currentAmount
 	} else {
 		currentAmount, err := cs.queries.GetSaldoPessoaJuridicaByID(ctx, originID)
 		if err != nil {
+			fmt.Println("error getting origin current amount:")
+			fmt.Println(err)
 			return result, err
 		}
 		originCurrency = currentAmount
 	}
 
 	if originCurrency-amount < 0 {
+		fmt.Println("error not enough")
 		return result, ErrNotEnoughCurrency
 	}
 
@@ -156,12 +162,16 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 	if isDestinationPessoaFisica {
 		currentAmount, err := cs.queries.GetSaldoPessoaFisicaByID(ctx, originID)
 		if err != nil {
+			fmt.Println("error getting destination current amount:")
+			fmt.Println(err)
 			return result, err
 		}
 		destinationCurrency = currentAmount
 	} else {
 		currentAmount, err := cs.queries.GetSaldoPessoaJuridicaByID(ctx, originID)
 		if err != nil {
+			fmt.Println("error getting destination current amount:")
+			fmt.Println(err)
 			return result, err
 		}
 		destinationCurrency = currentAmount
@@ -174,6 +184,8 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 		}
 		updatedOrigin, err := cs.queries.UpdateSaldoFromPessoaFisica(ctx, argsOriginPF)
 		if err != nil {
+			fmt.Println("error updating origing amount:")
+			fmt.Println(err)
 			return result, err
 		}
 
@@ -188,6 +200,8 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 
 		updatedOrigin, err := cs.queries.UpdateSaldoFromPessoaJuridica(ctx, argsOriginPJ)
 		if err != nil {
+			fmt.Println("error updating origin amount:")
+			fmt.Println(err)
 			return result, err
 		}
 
@@ -202,6 +216,8 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 
 		updatedDestination, err := cs.queries.UpdateSaldoFromPessoaFisica(ctx, argsDestinationPF)
 		if err != nil {
+			fmt.Println("error updating desination amount:")
+			fmt.Println(err)
 			return result, err
 		}
 
@@ -216,6 +232,8 @@ func (cs *CurrencyService) Transfer(ctx context.Context, isDestinationPessoaFisi
 
 		updatedDestination, err := cs.queries.UpdateSaldoFromPessoaJuridica(ctx, argsDestinationPJ)
 		if err != nil {
+			fmt.Println("error updating desination amount:")
+			fmt.Println(err)
 			return result, err
 		}
 
